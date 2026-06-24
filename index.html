@@ -110,6 +110,58 @@
   .footer .signout { color: var(--brass-dark); text-decoration: none; }
   .footer .signout:hover { text-decoration: underline; }
   .hidden { display: none; }
+
+  /* help (?) button — sits in the top corner of the tool card */
+  .help-btn {
+    position: absolute; top: -6px; right: -6px; z-index: 3;
+    width: 30px; height: 30px; padding: 0; border-radius: 50%;
+    border: 1px solid var(--brass-dark);
+    background: linear-gradient(180deg, var(--brass), var(--brass-dark));
+    color: #fff7e6; font-family: "Playfair Display", serif; font-size: 17px;
+    font-weight: 700; line-height: 1; cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 2px 6px rgba(59,47,35,.25);
+    display: grid; place-items: center;
+  }
+  .help-btn:hover { filter: brightness(1.06); }
+
+  /* how-to overlay */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 50;
+    background: rgba(39,39,42,.55);
+    display: grid; place-items: center; padding: 20px;
+  }
+  .modal-overlay.hidden { display: none; }
+  .modal {
+    width: 100%; max-width: 420px; max-height: 88vh; overflow-y: auto;
+    background: var(--card); border: 1px solid var(--line); border-radius: 6px;
+    padding: 26px 28px 24px; position: relative;
+    box-shadow: 0 2px 0 var(--parchment-2), 0 14px 40px rgba(59,47,35,.30);
+    font-size: 17px;
+  }
+  .modal::after {
+    content: ""; position: absolute; inset: 8px; border: 1px solid var(--line);
+    border-radius: 4px; pointer-events: none;
+  }
+  .modal h2 {
+    font-family: "Playfair Display", serif; font-weight: 700; font-size: 22px;
+    text-align: center; margin: 4px 0 2px; color: var(--ink);
+  }
+  .modal .sub { text-align: center; font-style: italic; color: var(--ink-soft);
+    font-size: 15px; margin: 0 0 12px; }
+  .modal ol { margin: 0; padding-left: 22px; }
+  .modal ol li { margin-bottom: 14px; }
+  .modal ol li b { font-weight: 700; }
+  .modal .tip { margin-top: 8px; padding: 12px 14px; border-radius: 4px;
+    background: #fbf3df; border: 1px solid var(--line); font-size: 15px;
+    color: var(--ink-soft); font-style: italic; }
+  .modal-close {
+    width: 100%; margin-top: 18px; padding: 12px; border: 1px solid var(--brass-dark);
+    border-radius: 4px; background: linear-gradient(180deg, var(--brass), var(--brass-dark));
+    color: #fff7e6; font-family: "Playfair Display", serif; font-size: 16px;
+    font-weight: 600; letter-spacing: .08em; text-transform: uppercase; cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .modal-close:hover { filter: brightness(1.06); }
 </style>
 </head>
 <body>
@@ -138,6 +190,8 @@
 
   <!-- ===== MAIN TOOL ===== -->
   <div class="card hidden" id="app-card">
+    <button class="help-btn" id="help-btn" title="How to use this tool"
+      aria-label="How to use this tool" onclick="openHelp()">?</button>
     <div class="brand">
       <img class="logo" src="logo.png" alt="Industrial Treasures" />
       <p class="tagline">Antiques &amp; Curiosities · Est. Forever</p>
@@ -159,6 +213,21 @@
     <div id="status"></div>
 
     <div class="footer">— Curated Cross-Listing — <a href="#" onclick="logout();return false;" class="signout">Sign out</a></div>
+  </div>
+
+  <!-- ===== HOW-TO ===== -->
+  <div class="modal-overlay hidden" id="help-modal" onclick="if(event.target===this)closeHelp()">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="help-title">
+      <h2 id="help-title">How to List a Treasure</h2>
+      <p class="sub">Three easy steps</p>
+      <ol>
+        <li><b>Type the item's SKU</b> in the box (for example, <b>ANT-001</b>). This is the same SKU you gave the item in Square.</li>
+        <li><b>Pick where to sell it.</b> All three marketplaces are already checked. Uncheck any you don't want — leave them all checked to list everywhere.</li>
+        <li><b>Click "List This Treasure."</b> Wait a moment for the message at the bottom.</li>
+      </ol>
+      <div class="tip">A <b>green ✓</b> means it worked. A <b>red ✗</b> means something needs a look — usually the SKU was typed wrong or isn't in Square yet. Just fix it and click again.</div>
+      <button class="modal-close" onclick="closeHelp()">Got it</button>
+    </div>
   </div>
 
 <script>
@@ -200,6 +269,13 @@ function logout() {
 
 // stay signed in for the browser session (until tab is closed)
 if (sessionStorage.getItem('it_auth') === '1') showApp();
+
+// ---- how-to modal ----
+function openHelp()  { document.getElementById('help-modal').classList.remove('hidden'); }
+function closeHelp() { document.getElementById('help-modal').classList.add('hidden'); }
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeHelp();
+});
 
 async function send() {
   const sku = document.getElementById('sku').value.trim();

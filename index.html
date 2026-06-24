@@ -277,7 +277,10 @@ function login() {
   s.textContent = 'Signing in…';
   btn.disabled = true;
 
-  const user = new AmazonCognitoIdentity.CognitoUser({ Username: u, Pool: userPool });
+  // Storage MUST match the pool's (sessionStorage). A CognitoUser created without
+  // an explicit Storage defaults to localStorage, so its tokens would be written
+  // where getCurrentUser() never looks — making every action read as "expired".
+  const user = new AmazonCognitoIdentity.CognitoUser({ Username: u, Pool: userPool, Storage: window.sessionStorage });
   const details = new AmazonCognitoIdentity.AuthenticationDetails({ Username: u, Password: p });
 
   user.authenticateUser(details, {

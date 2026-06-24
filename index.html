@@ -230,11 +230,30 @@
     </div>
   </div>
 
+<!-- Amazon Cognito browser SDK (exposes the global `AmazonCognitoIdentity`). -->
+<script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.12/dist/amazon-cognito-identity.min.js"></script>
 <script>
 const INGEST_URL = 'https://zu92q3vcp6.execute-api.us-east-2.amazonaws.com/dev/ingest';
 
-// ---- simple front-end gate (demo only — not real security) ----
-const CREDS = { user: 'industrial', pass: '123' };
+// ---- real auth via Amazon Cognito ----
+// Tokens live in sessionStorage, so closing the tab signs you out.
+const userPool = new AmazonCognitoIdentity.CognitoUserPool({
+  UserPoolId: 'us-east-2_As1F7dFY3',
+  ClientId:   '251ifcg5qrk0v5lc02n1r2fn29',
+  Storage:    window.sessionStorage,
+});
+
+// Resolve a currently-valid ID token, auto-refreshing if it has expired.
+function getIdToken() {
+  return new Promise((resolve, reject) => {
+    const user = userPool.getCurrentUser();
+    if (!user) return reject(new Error('not signed in'));
+    user.getSession((err, session) => {
+      if (err || !session || !session.isValid()) return reject(err || new Error('session expired'));
+      resolve(session.getIdToken().getJwtToken());
+    });
+  });
+}
 
 function showApp() {
   document.getElementById('login-card').classList.add('hidden');
@@ -246,19 +265,48 @@ function login() {
   const u = document.getElementById('user').value.trim();
   const p = document.getElementById('pass').value;
   const s = document.getElementById('login-status');
-  if (u === CREDS.user && p === CREDS.pass) {
-    sessionStorage.setItem('it_auth', '1');
-    s.textContent = '';
-    showApp();
-  } else {
+  const btn = document.getElementById('login-btn');
+
+  if (!u || !p) {
     s.className = 'err';
-    s.textContent = '✗ Incorrect username or password.';
-    document.getElementById('pass').value = '';
+    s.textContent = '✗ Enter your username and password.';
+    return;
   }
+
+  s.className = '';
+  s.textContent = 'Signing in…';
+  btn.disabled = true;
+
+  const user = new AmazonCognitoIdentity.CognitoUser({ Username: u, Pool: userPool });
+  const details = new AmazonCognitoIdentity.AuthenticationDetails({ Username: u, Password: p });
+
+  user.authenticateUser(details, {
+    onSuccess: () => {
+      btn.disabled = false;
+      s.textContent = '';
+      showApp();
+    },
+    onFailure: (err) => {
+      btn.disabled = false;
+      s.className = 'err';
+      s.textContent = (err && err.code === 'NotAuthorizedException')
+        ? '✗ Incorrect username or password.'
+        : '✗ ' + (err && err.message ? err.message : 'Sign-in failed.');
+      document.getElementById('pass').value = '';
+    },
+    // Fires if the account still has a temporary password. Finalize it with the
+    // admin-set-user-password --permanent CLI command (see AUTH-SETUP.md).
+    newPasswordRequired: () => {
+      btn.disabled = false;
+      s.className = 'err';
+      s.textContent = '✗ This account needs its password finalized in AWS before first use.';
+    },
+  });
 }
 
 function logout() {
-  sessionStorage.removeItem('it_auth');
+  const user = userPool.getCurrentUser();
+  if (user) user.signOut();
   document.getElementById('app-card').classList.add('hidden');
   document.getElementById('login-card').classList.remove('hidden');
   document.getElementById('user').value = '';
@@ -267,8 +315,8 @@ function logout() {
   document.getElementById('user').focus();
 }
 
-// stay signed in for the browser session (until tab is closed)
-if (sessionStorage.getItem('it_auth') === '1') showApp();
+// stay signed in for the browser session (until the tab is closed)
+getIdToken().then(showApp).catch(() => {});
 
 // ---- how-to modal ----
 function openHelp()  { document.getElementById('help-modal').classList.remove('hidden'); }
@@ -292,12 +340,33 @@ async function send() {
   status.textContent = 'Sending to the marketplaces…';
   btn.disabled = true;
 
+  // Get a valid token; if the session has lapsed, send them back to sign in.
+  let token;
+  try {
+    token = await getIdToken();
+  } catch {
+    status.className = 'err';
+    status.textContent = '✗ Your session expired. Please sign in again.';
+    btn.disabled = false;
+    logout();
+    return;
+  }
+
   try {
     const res = await fetch(INGEST_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      // The API Gateway Cognito authorizer reads the raw JWT from this header
+      // (no "Bearer " prefix for a REST-API user-pool authorizer).
+      headers: { 'Content-Type': 'application/json', 'Authorization': token },
       body: JSON.stringify(payload),
     });
+
+    if (res.status === 401 || res.status === 403) {
+      status.className = 'err';
+      status.textContent = '✗ Your session expired. Please sign in again.';
+      logout();
+      return;
+    }
 
     const text = await res.text();
     let body; try { body = JSON.parse(text); } catch { body = null; }

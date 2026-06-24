@@ -16,5 +16,5 @@ python3 -m http.server 8000
 ```
 Open http://localhost:8000
 
-Login: `industrial` / `123` (front-end demo gate — see `TODO.md` for the real-auth note).
-The ingest endpoint is set in `INGEST_URL` inside `index.html`.
+Login is handled by **Amazon Cognito** (real auth — see `AUTH-SETUP.md`). The pool/client
+IDs and ingest endpoint are set near the top of the `<script>` in `index.html`.

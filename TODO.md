@@ -1,15 +1,14 @@
 # TODO
 
 ## Security (before launching on app.industrialtreasures.com)
-- [ ] **Replace the front-end login with real authentication.**
-  The current login (`industrial` / `123` in `index.html`) is a UI gate only — the
-  credentials are visible in page source and anyone can still POST directly to the
-  `…/dev/ingest` endpoint with curl. It is NOT real security.
-  - Protect the API itself, not just the UI. Options:
-    - API Gateway + **Amazon Cognito** user pool (proper login, tokens).
-    - Or, minimum viable: an **API key / Lambda authorizer** on the API Gateway route
-      so the endpoint rejects unauthenticated requests.
-  - Once the API is protected, the front end sends the auth token with each request.
+- [x] **Replace the front-end login with real authentication.**
+  Done — Amazon Cognito user pool (`us-east-2_As1F7dFY3`) + API Gateway Cognito
+  authorizer on `POST /ingest`. The front end signs in via `amazon-cognito-identity-js`
+  and sends the ID token on every request. See `AUTH-SETUP.md`.
+  - [ ] **Verify the lockdown:** `curl -X POST …/dev/ingest` with no token must return 401.
+  - [ ] **Add CORS to API Gateway 4XX gateway responses** (UNAUTHORIZED / ACCESS_DENIED /
+    DEFAULT_4XX) so the browser can read a 401 — otherwise an expired-token response is
+    blocked by CORS and the UI shows a misleading message.
 
 ## Backend correctness (CORS)
 - [ ] **Add `Access-Control-Allow-Origin` to the Lambda's error return paths.**

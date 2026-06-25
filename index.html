@@ -27,16 +27,16 @@
     font-display: swap; src: url("fonts/playfair-display-800.woff2") format("woff2");
   }
   :root {
-    --parchment: #f4f4f5;
-    --parchment-2: #e4e4e7;
-    --ink: #27272a;
-    --ink-soft: #71717a;
-    --brass: #6b7280;
-    --brass-dark: #4b5563;
-    --line: #d4d4d8;
+    --parchment: #faf8f5;
+    --parchment-2: #f3f1ed;
+    --ink: #1c1917;
+    --ink-soft: #78716c;
+    --brass: #b59a73;
+    --brass-dark: #8c7250;
+    --line: #e7e5e4;
     --card: #ffffff;
-    --green: #3f7a4f;
-    --red: #b04434;
+    --green: #166534;
+    --red: #991b1b;
   }
   * { box-sizing: border-box; }
   body {
@@ -44,124 +44,166 @@
     color: var(--ink);
     font-family: "EB Garamond", Georgia, serif; font-size: 17px; line-height: 1.5;
     background-color: var(--parchment);
-    background-image:
-      radial-gradient(circle at 20% 15%, rgba(113,113,122,.10), transparent 45%),
-      radial-gradient(circle at 85% 80%, rgba(75,85,99,.10), transparent 45%);
+    background-image: radial-gradient(circle at 50% 50%, #ffffff 0%, var(--parchment) 100%);
+    padding: 20px;
   }
   .card {
-    width: 380px; background: var(--card);
+    width: 100%; max-width: 390px; background: var(--card);
     border: 1px solid var(--line);
-    border-radius: 6px; padding: 30px 30px 26px;
-    box-shadow: 0 2px 0 var(--parchment-2), 0 10px 30px rgba(59,47,35,.18);
+    border-radius: 12px; padding: 40px 36px 36px;
+    box-shadow: 0 10px 30px -10px rgba(28,25,23,0.08), 0 1px 3px rgba(28,25,23,0.02);
     position: relative;
-  }
-  /* decorative double border */
-  .card::after {
-    content: ""; position: absolute; inset: 8px; border: 1px solid var(--line);
-    border-radius: 4px; pointer-events: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
   .brand { text-align: center; margin-bottom: 8px; position: relative; }
   .logo {
-    display: block; width: 100%; max-width: 300px; height: auto;
-    margin: 2px auto 6px;
+    display: block; width: 100%; max-width: 260px; height: auto;
+    margin: 0 auto 6px;
   }
   .tagline {
-    font-style: italic; color: var(--ink-soft); font-size: 15px; margin: 2px 0 0;
+    font-family: "EB Garamond", Georgia, serif; font-style: italic; color: var(--ink-soft); font-size: 14px; margin: 4px 0 0; opacity: 0.85;
   }
   .rule {
-    display: flex; align-items: center; gap: 10px; color: var(--brass);
-    margin: 16px 0 20px; font-size: 13px;
+    display: flex; align-items: center; gap: 12px; color: var(--brass);
+    margin: 22px 0 26px; font-size: 11px; opacity: 0.7;
   }
   .rule::before, .rule::after { content: ""; flex: 1; height: 1px; background: var(--line); }
-  .field { display: block; font-size: 14px; color: var(--ink-soft);
-    letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px; }
-  #sku {
-    width: 100%; padding: 11px 12px; border-radius: 4px; border: 1px solid var(--line);
-    background: #fffdf6; color: var(--ink); font-family: "EB Garamond", serif;
-    font-size: 18px; margin-bottom: 22px; letter-spacing: .05em;
+  .field {
+    display: block; font-family: system-ui, -apple-system, sans-serif;
+    font-size: 11px; font-weight: 600; color: var(--ink-soft);
+    letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px;
   }
-  #sku:focus { outline: none; border-color: var(--brass); box-shadow: 0 0 0 3px rgba(169,119,47,.15); }
-  .channels { display: flex; flex-direction: column; gap: 9px; margin-bottom: 22px; }
+  input[type="text"], input[type="password"], input:not([type]) {
+    width: 100%; padding: 12px 14px; border-radius: 6px; border: 1px solid var(--line);
+    background: var(--parchment); color: var(--ink);
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 15px; margin-bottom: 22px; transition: all 0.2s ease;
+  }
+  input[type="text"]::placeholder, input[type="password"]::placeholder, input:not([type])::placeholder {
+    color: #a8a29e;
+  }
+  input[type="text"]:focus, input[type="password"]:focus, input:not([type]):focus {
+    outline: none; border-color: var(--brass-dark); background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(181,154,115,0.15);
+  }
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--ink);
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+  .channels { display: flex; flex-direction: column; gap: 8px; margin-bottom: 22px; }
   .ch {
-    display: flex; align-items: center; gap: 11px; padding: 11px 13px;
-    border: 1px solid var(--line); border-radius: 4px; cursor: pointer;
-    background: #fffdf6; font-size: 17px; transition: background .12s, border-color .12s;
+    display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+    border: 1px solid var(--line); border-radius: 6px; cursor: pointer;
+    background: var(--parchment); font-size: 15px;
+    font-family: system-ui, -apple-system, sans-serif;
+    transition: all 0.2s ease;
   }
-  .ch:hover { background: #fbf3df; border-color: var(--brass); }
-  .ch input { accent-color: var(--brass); width: 17px; height: 17px; }
-  .ch .ico { font-size: 17px; }
+  .ch:hover {
+    background: #ffffff;
+    border-color: var(--brass);
+    box-shadow: 0 2px 8px rgba(28,25,23,0.02);
+  }
+  .ch:has(input:checked) {
+    background: #ffffff;
+    border-color: var(--brass-dark);
+    box-shadow: 0 2px 8px rgba(181,154,115,0.1);
+  }
+  .ch input { accent-color: var(--brass-dark); width: 16px; height: 16px; cursor: pointer; }
+  .ch .ico { display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; }
+  .ch .ico-img {
+    width: 100%; height: auto; max-height: 100%; object-fit: contain;
+    filter: grayscale(100%) opacity(45%);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .ch:hover .ico-img {
+    filter: grayscale(0%) opacity(100%);
+    transform: scale(1.08);
+  }
+  .ch:has(input:checked) .ico-img {
+    filter: grayscale(0%) opacity(100%);
+  }
   button {
-    width: 100%; padding: 13px; border: 1px solid var(--brass-dark); border-radius: 4px;
-    background: linear-gradient(180deg, var(--brass), var(--brass-dark)); color: #fff7e6;
-    font-family: "Playfair Display", serif; font-size: 17px; font-weight: 600;
+    width: 100%; padding: 14px; border: none; border-radius: 6px;
+    background: var(--ink); color: #ffffff;
+    font-family: "Playfair Display", serif; font-size: 16px; font-weight: 600;
     letter-spacing: .08em; cursor: pointer; text-transform: uppercase;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.25);
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(28,25,23,0.1);
   }
-  button:hover { filter: brightness(1.06); }
-  button:disabled { opacity: .6; cursor: default; }
-  #status { margin-top: 16px; font-size: 15px; white-space: pre-wrap; word-break: break-word;
+  button:hover { background: var(--brass-dark); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(140,114,80,0.2); }
+  button:active { transform: translateY(1px); box-shadow: 0 2px 6px rgba(28,25,23,0.1); }
+  button:disabled { background: #a8a29e; cursor: not-allowed; transform: none; box-shadow: none; opacity: 0.5; }
+  #status { margin-top: 16px; font-size: 14px; white-space: pre-wrap; word-break: break-word;
     color: var(--ink-soft); text-align: center; font-style: italic; }
-  #status.ok { color: var(--green); }
-  #status.err { color: var(--red); }
-  #login-status { margin-top: 14px; font-size: 14px; text-align: center; font-style: italic; min-height: 1em; }
-  #login-status.err { color: var(--red); }
-  .footer { text-align: center; margin-top: 18px; font-size: 12px; color: var(--ink-soft);
-    letter-spacing: .1em; text-transform: uppercase; opacity: .7; }
-  .footer .signout { color: var(--brass-dark); text-decoration: none; }
-  .footer .signout:hover { text-decoration: underline; }
-  .hidden { display: none; }
+  #status.ok { color: var(--green); font-weight: 600; font-style: normal; }
+  #status.err { color: var(--red); font-weight: 600; font-style: normal; }
+  #login-status { margin-top: 14px; font-size: 14px; text-align: center; font-style: italic; min-height: 1.2em; }
+  #login-status.err { color: var(--red); font-weight: 600; font-style: normal; }
+  .footer { text-align: center; margin-top: 24px; font-size: 11px; color: var(--ink-soft);
+    letter-spacing: .1em; text-transform: uppercase; opacity: .7; font-family: system-ui, -apple-system, sans-serif; }
+  .footer .signout { color: var(--brass-dark); text-decoration: none; font-weight: 600; transition: color 0.2s ease; }
+  .footer .signout:hover { color: var(--ink); text-decoration: underline; }
+  .hidden { display: none !important; }
 
   /* help (?) button — sits in the top corner of the tool card */
   .help-btn {
-    position: absolute; top: -6px; right: -6px; z-index: 3;
-    width: 30px; height: 30px; padding: 0; border-radius: 50%;
-    border: 1px solid var(--brass-dark);
-    background: linear-gradient(180deg, var(--brass), var(--brass-dark));
-    color: #fff7e6; font-family: "Playfair Display", serif; font-size: 17px;
-    font-weight: 700; line-height: 1; cursor: pointer;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 2px 6px rgba(59,47,35,.25);
+    position: absolute; top: 16px; right: 16px; z-index: 3;
+    width: 24px; height: 24px; padding: 0; border-radius: 50%;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-soft); font-family: "Playfair Display", serif; font-size: 14px;
+    font-weight: 600; cursor: pointer;
     display: grid; place-items: center;
+    transition: all 0.2s ease;
   }
-  .help-btn:hover { filter: brightness(1.06); }
+  .help-btn:hover { border-color: var(--brass-dark); color: var(--brass-dark); background: var(--parchment-2); }
 
   /* how-to overlay */
   .modal-overlay {
     position: fixed; inset: 0; z-index: 50;
-    background: rgba(39,39,42,.55);
+    background: rgba(28,25,23,0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     display: grid; place-items: center; padding: 20px;
+    transition: opacity 0.25s ease;
   }
-  .modal-overlay.hidden { display: none; }
+  .modal-overlay.hidden { display: none !important; }
   .modal {
-    width: 100%; max-width: 420px; max-height: 88vh; overflow-y: auto;
-    background: var(--card); border: 1px solid var(--line); border-radius: 6px;
-    padding: 26px 28px 24px; position: relative;
-    box-shadow: 0 2px 0 var(--parchment-2), 0 14px 40px rgba(59,47,35,.30);
-    font-size: 17px;
+    width: 100%; max-width: 400px; max-height: 88vh; overflow-y: auto;
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 36px 32px 32px; position: relative;
+    box-shadow: 0 20px 40px -10px rgba(28,25,23,0.15);
+    font-size: 16px;
+    animation: modalEntrance 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .modal::after {
-    content: ""; position: absolute; inset: 8px; border: 1px solid var(--line);
-    border-radius: 4px; pointer-events: none;
+  @keyframes modalEntrance {
+    from { opacity: 0; transform: scale(0.96) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
   }
   .modal h2 {
     font-family: "Playfair Display", serif; font-weight: 700; font-size: 22px;
-    text-align: center; margin: 4px 0 2px; color: var(--ink);
+    text-align: center; margin: 0 0 4px; color: var(--ink);
   }
   .modal .sub { text-align: center; font-style: italic; color: var(--ink-soft);
-    font-size: 15px; margin: 0 0 12px; }
-  .modal ol { margin: 0; padding-left: 22px; }
-  .modal ol li { margin-bottom: 14px; }
-  .modal ol li b { font-weight: 700; }
-  .modal .tip { margin-top: 8px; padding: 12px 14px; border-radius: 4px;
-    background: #fbf3df; border: 1px solid var(--line); font-size: 15px;
-    color: var(--ink-soft); font-style: italic; }
+    font-size: 14px; margin: 0 0 20px; }
+  .modal ol { margin: 0; padding-left: 20px; }
+  .modal ol li { margin-bottom: 12px; color: var(--ink); line-height: 1.5; }
+  .modal ol li b { font-weight: 600; color: var(--ink); }
+  .modal .tip { margin-top: 16px; padding: 14px 16px; border-radius: 8px;
+    background: var(--parchment); border: 1px solid var(--line); font-size: 14px;
+    color: var(--ink-soft); font-style: italic; line-height: 1.5; }
   .modal-close {
-    width: 100%; margin-top: 18px; padding: 12px; border: 1px solid var(--brass-dark);
-    border-radius: 4px; background: linear-gradient(180deg, var(--brass), var(--brass-dark));
-    color: #fff7e6; font-family: "Playfair Display", serif; font-size: 16px;
-    font-weight: 600; letter-spacing: .08em; text-transform: uppercase; cursor: pointer;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.25);
+    width: 100%; margin-top: 20px; padding: 12px; border: 1px solid var(--ink);
+    border-radius: 6px; background: transparent;
+    color: var(--ink); font-family: "Playfair Display", serif; font-size: 15px;
+    font-weight: 600; letter-spacing: .05em; text-transform: uppercase; cursor: pointer;
+    box-shadow: none;
+    transition: all 0.2s ease;
   }
-  .modal-close:hover { filter: brightness(1.06); }
+  .modal-close:hover { background: var(--ink); color: #ffffff; }
 </style>
 </head>
 <body>
@@ -169,13 +211,13 @@
   <div class="card" id="login-card">
     <div class="brand">
       <img class="logo" src="logo.png" alt="Industrial Treasures" />
-      <p class="tagline">Antiques &amp; Curiosities · Est. Forever</p>
+      <p class="tagline">Antiques &amp; Curiosities</p>
     </div>
 
     <div class="rule">✦</div>
 
     <label class="field" for="user">Username</label>
-    <input id="user" autocomplete="username" placeholder="username"
+    <input id="user" type="text" autocomplete="username" placeholder="username"
       onkeydown="if(event.key==='Enter'){document.getElementById('pass').focus()}" />
 
     <label class="field" for="pass">Password</label>
@@ -194,19 +236,37 @@
       aria-label="How to use this tool" onclick="openHelp()">?</button>
     <div class="brand">
       <img class="logo" src="logo.png" alt="Industrial Treasures" />
-      <p class="tagline">Antiques &amp; Curiosities · Est. Forever</p>
+      <p class="tagline">Antiques &amp; Curiosities</p>
     </div>
 
     <div class="rule">✦</div>
 
     <label class="field" for="sku">Item SKU</label>
-    <input id="sku" placeholder="ANT-001" />
+    <input id="sku" type="text" placeholder="ANT-001" />
 
     <label class="field">Send to Marketplaces</label>
     <div class="channels">
-      <label class="ch"><input type="checkbox" value="bigcommerce" checked /> <span class="ico">🏛️</span> BigCommerce</label>
-      <label class="ch"><input type="checkbox" value="ebay" checked /> <span class="ico">🔨</span> eBay</label>
-      <label class="ch"><input type="checkbox" value="etsy" checked /> <span class="ico">🕰️</span> Etsy</label>
+      <label class="ch" data-channel="bigcommerce">
+        <input type="checkbox" value="bigcommerce" checked />
+        <span class="ico">
+          <img class="ico-img" src="bigcommerce_logo_icon_247476.png" alt="BigCommerce Logo" aria-hidden="true" />
+        </span>
+        BigCommerce
+      </label>
+      <label class="ch" data-channel="ebay">
+        <input type="checkbox" value="ebay" checked />
+        <span class="ico">
+          <img class="ico-img" src="ebay-logo.png" alt="eBay Logo" aria-hidden="true" />
+        </span>
+        eBay
+      </label>
+      <label class="ch" data-channel="etsy">
+        <input type="checkbox" value="etsy" checked />
+        <span class="ico">
+          <img class="ico-img" src="etsy_logo_icon_171172.png" alt="Etsy Logo" aria-hidden="true" />
+        </span>
+        Etsy
+      </label>
     </div>
 
     <button id="send" onclick="send()">List This Treasure</button>
